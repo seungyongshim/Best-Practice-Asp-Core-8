@@ -1,9 +1,5 @@
-using System.Diagnostics;
+using FastEndpoint_8.Results;
 using FastEndpoints;
-
-Activity.DefaultIdFormat = ActivityIdFormat.W3C;
-
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +11,10 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseFastEndpoints(config =>
+app.UseDefaultExceptionHandler()
+   .UseFastEndpoints(config =>
 {
-    //config.Errors.UseProblemDetails();
+    config.Errors.ResponseBuilder = (failures, httpContext, statusCode) =>
+        new CustomErrorResponse(failures, httpContext, statusCode);
 });
 app.Run();

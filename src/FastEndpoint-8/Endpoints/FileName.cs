@@ -17,6 +17,8 @@ public class RootEndpoint : Endpoint<RequestDto, ResponseDto>
 
     public override async Task HandleAsync(RequestDto req, CancellationToken ct)
     {
+        throw new Exception("here blahblahblah");
+
         await SendAsync(new());
     }
 }
