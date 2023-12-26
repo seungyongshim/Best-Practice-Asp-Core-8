@@ -22,9 +22,12 @@ public class AuditLogAttribute : ActionFilterAttribute
         {
             if (src.BindingInfo?.BindingSource == BindingSource.Body)
             {
-                var converter = context.HttpContext.RequestServices.GetRequiredService(typeof(IDtoAuditConverter<>).MakeGenericType(src.ParameterType));
+                var converter = context.HttpContext.RequestServices.GetService(typeof(IDtoAuditConverter<>).MakeGenericType(src.ParameterType));
 
-                context.HttpContext.Items["bodyType"] = converter.ToConvert(context.ActionArguments[src.Name], src.ParameterType);
+                if (converter is not null)
+                {
+                    //context.HttpContext.Items["bodyType"] = converter.ToConvert(context.ActionArguments[src.Name], src.ParameterType);
+                }
             }
         }
     }
