@@ -16,7 +16,7 @@ module Program =
         app.MapGet("/",  Func<_, _>(fun (ctx: HttpContext) ->
             task {        
                 return Results.Ok
-                    {| hello = "world"|}
+                    {| hello = "world" |}
             })) |> ignore
 
         app.Run()
