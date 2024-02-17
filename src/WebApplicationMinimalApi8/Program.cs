@@ -27,7 +27,7 @@ app.MapGet("/500", () =>
 {
     throw new Exception("이런 저런 에러가 났군요");
 })
-.WithName("InternalException")6c
+.WithName("InternalException")
 .WithOpenApi();
 
 app.Run();

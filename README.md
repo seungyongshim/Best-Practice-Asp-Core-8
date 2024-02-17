@@ -17,3 +17,10 @@ var app = builder.Build();
 
 app.UseExceptionHandler();
 ```
+
+## Minimal API에서 FluentValidation 사용하기
+* https://github.com/Carl-Hugo/FluentValidation.AspNetCore.Http
+* `dotnet add package ForEvolve.FluentValidation.AspNetCore.Http`
+```csharp
+
+```

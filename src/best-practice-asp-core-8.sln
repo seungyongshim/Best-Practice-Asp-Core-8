@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplicationMinimalApi8", "WebApplicationMinimalApi8\WebApplicationMinimalApi8.csproj", "{D82EF501-FD42-4E1F-97B6-B84C50913C2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplicationMinimalApi8", "WebApplicationMinimalApi8\WebApplicationMinimalApi8.csproj", "{D82EF501-FD42-4E1F-97B6-B84C50913C2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

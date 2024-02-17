@@ -22,6 +22,7 @@ public sealed class BadRequestExceptionHandler(ILogger<BadRequestExceptionHandle
         };
 
         httpContext.Response.StatusCode = problemDetails.Status.Value;
+        httpContext.Response.ContentType = "application/problem+json";
 
         await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
 
