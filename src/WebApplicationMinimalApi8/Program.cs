@@ -99,6 +99,7 @@ root.MapPost("/echo", async (HttpContext ctx, JsonDocument json) =>
     using var httpclient = ctx.RequestServices.GetRequiredService<IHttpClientFactory>().CreateClient("echo");
 
     using var res = await httpclient.PostAsJsonAsync("post", json);
+
     return await res.Content.ReadAsStringAsync();
 
     //return Results.Text

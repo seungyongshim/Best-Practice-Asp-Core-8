@@ -44,7 +44,7 @@ public class ResponseAddTraceIdFilter : IEndpointFilter
                 contentType: MediaTypeNames.Application.Json,
                 statusCode: 200
             ),
-            IResult v => Results.Text
+            Ok v => Results.Text
             (
                 $$"""{"traceId":"{{id}}"}""",
                 contentType: MediaTypeNames.Application.Json,
@@ -54,6 +54,7 @@ public class ResponseAddTraceIdFilter : IEndpointFilter
                     _ => 200
                 }
             ),
+            IResult v => v,
             { } v => Results.Text
             (
                 AddTraceId(v).ToJsonString(serializerOptions),

@@ -132,3 +132,6 @@ Generic server error 500
 ```
 
 ```
+
+## 개인정보 로깅
+* https://andrewlock.net/redacting-sensitive-data-with-microsoft-extensions-compliance/
