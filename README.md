@@ -4,6 +4,7 @@
 
 
 ## .Net 8에서 GlobalErrorHandling이 추가됨
+* https://juliocasal.com/blog/Global-Error-Handling-In-AspNet-Core-APIs.html*
 * https://www.milanjovanovic.tech/blog/global-error-handling-in-aspnetcore-8
 * https://learn.microsoft.com/ko-kr/aspnet/core/fundamentals/error-handling?view=aspnetcore-8.0#produce-a-problemdetails-payload-for-exceptions
 

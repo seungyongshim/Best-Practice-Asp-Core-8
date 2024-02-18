@@ -3,6 +3,7 @@ using FluentValidation;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using WebApplicationMinimalApi8.Dto;
+using WebApplicationMinimalApi8.EndpointFilters;
 using WebApplicationMinimalApi8.ExceptionHandlers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,8 +36,8 @@ if (builder.Environment.IsEnvironment("Best"))
 
 app.MapPost("/validate", (MessageDto message) => message)
    .WithDescription("메시지를 검증합니다.")
-   
    .AddFluentValidationFilter()
+   .AddEndpointFilter<ResponseAddTraceIdFilter>()
    .WithOpenApi();
 
 app.MapGet("/500", () =>
