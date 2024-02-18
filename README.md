@@ -135,3 +135,5 @@ Generic server error 500
 
 ## 개인정보 로깅
 * https://andrewlock.net/redacting-sensitive-data-with-microsoft-extensions-compliance/
+
+https://levelup.gitconnected.com/a-best-practice-for-designing-interfaces-in-net-c-2c6ebdb4f1c1
