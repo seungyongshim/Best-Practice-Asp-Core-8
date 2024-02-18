@@ -27,21 +27,24 @@ builder.Services.ConfigureHttpJsonOptions(options => {
     };
 });
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
 builder.AddFluentValidationEndpointFilter();
+
+
+builder.Services.AddHttpClient("echo", client =>
+{
+    client.BaseAddress = new("https://httpbin.org");
+});
 
 if (builder.Environment.IsEnvironment("Best"))
 {
+    builder.Services.Configure<RouteHandlerOptions>(o => o.ThrowOnBadRequest = true);
+    builder.Services.AddExceptionHandler<BadRequestExceptionHandler>();
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails(options =>
-        options.CustomizeProblemDetails = (context) =>
-    {
-        if (!context.ProblemDetails.Extensions.ContainsKey("traceId"))
-        {
-            string? traceId = Activity.Current?.Id ?? context.HttpContext.TraceIdentifier;
-            context.ProblemDetails.Extensions.Add(new KeyValuePair<string, object?>("traceId", traceId));
-        }
-    }
-);
+        options.CustomizeProblemDetails = context =>
+            context.ProblemDetails.Extensions["traceId"] =
+                Activity.Current?.Id ?? context.HttpContext.TraceIdentifier);
 }
 
 var app = builder.Build();
@@ -79,9 +82,9 @@ root.MapPost("/Persons", (PersonDto person) => Results.Created("/Persons/1", new
     .WithDescription("사람을 생성합니다.")
     .WithOpenApi();
 
-root.MapPut("/Persons", (PersonDto person) => Results.Created("/Persons/1", new
+root.MapPut("/Persons/{id}", (PersonDto person, int id) => Results.Ok(new
     {
-        Id = 1,
+        Id = id,
         person.Name,
         person.Age,
         person.Emails

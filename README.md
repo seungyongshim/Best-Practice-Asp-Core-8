@@ -11,8 +11,13 @@
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.Configure<RouteHandlerOptions>(o => o.ThrowOnBadRequest = true);
+builder.Services.AddExceptionHandler<BadRequestExceptionHandler>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-builder.Services.AddProblemDetails();
+builder.Services.AddProblemDetails(options =>
+    options.CustomizeProblemDetails = context =>
+        context.ProblemDetails.Extensions["traceId"] =
+            Activity.Current?.Id ?? context.HttpContext.TraceIdentifier);
 
 var app = builder.Build();
 
@@ -23,7 +28,10 @@ app.UseExceptionHandler();
 * https://github.com/Carl-Hugo/FluentValidation.AspNetCore.Http
 * `dotnet add package ForEvolve.FluentValidation.AspNetCore.Http`
 ```csharp
+var root = app.MapGroup("/")
+              .AddFluentValidationFilter();
 
+root.MapPost(...)
 ```
 
 ## Swagger Request Exapmle 작성
@@ -116,3 +124,11 @@ For methods not supported 405
 Generic server error 500
 ```
 
+## HttpClient의 올바른 사용방법
+* https://devblogs.microsoft.com/dotnet/author/martintomka/
+* https://learn.microsoft.com/ko-kr/dotnet/core/resilience/http-resilience
+* `Microsoft.Extensions.Http.Resilience` 패키지 사용(암시적으로 polly를 사용함)
+* `Chaos Engineering`
+```
+
+```
