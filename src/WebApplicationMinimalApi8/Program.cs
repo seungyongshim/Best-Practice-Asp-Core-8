@@ -1,10 +1,13 @@
 using System.Reflection.Metadata.Ecma335;
+using System.Text.Json.Serialization.Metadata;
+using System.Text.Json.Serialization;
 using FluentValidation;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using WebApplicationMinimalApi8.Dto;
 using WebApplicationMinimalApi8.EndpointFilters;
 using WebApplicationMinimalApi8.ExceptionHandlers;
+using System.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +19,15 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddSwaggerExamplesFromAssemblyOf<Program>();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.AddFluentValidationEndpointFilter();
+builder.Services.ConfigureHttpJsonOptions(options => {
+    options.SerializerOptions.WriteIndented = true;
+    options.SerializerOptions.IncludeFields = true;
+    options.SerializerOptions.PreferredObjectCreationHandling = JsonObjectCreationHandling.Populate;
+    options.SerializerOptions.TypeInfoResolver = new DefaultJsonTypeInfoResolver
+    {
+        Modifiers = { InterceptNullSetter }
+    };
+});
 
 if (builder.Environment.IsEnvironment("Best"))
 {
@@ -49,3 +61,19 @@ app.MapGet("/500", () =>
 
 app.Run();
 
+static void InterceptNullSetter(JsonTypeInfo typeInfo)
+{
+    foreach (var (propertyInfo, setProperty) in from propertyInfo in typeInfo.Properties
+                                                let setProperty = propertyInfo.Set
+                                                where setProperty is not null
+                                                select (propertyInfo, setProperty))
+    {
+        propertyInfo.Set = (obj, value) =>
+        {
+            if (value != null)
+            {
+                setProperty(obj, value);
+            }
+        };
+    }
+}

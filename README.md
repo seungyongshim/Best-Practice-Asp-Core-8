@@ -30,5 +30,17 @@ app.UseExceptionHandler();
 * https://medium.com/@niteshsinghal85/multiple-request-response-examples-for-swagger-ui-in-asp-net-core-864c0bdc6619
 
 ## Request Body에서 null을 명시할 경우 무시할 수 없음
-* JsonIgnoreCondition은 현재 null 쓰기무시만 있고 null 읽기무시는 없음
-* https://github.com/dotnet/runtime/issues/66490#issuecomment-1142804662
+* `JsonIgnoreCondition.WhenReadingNull`이 추가될 예정도 없음
+* https://stackoverflow.com/questions/77516935/ignore-json-null-value-in-system-text-json-deserialize
+
+```csharp
+builder.Services.ConfigureHttpJsonOptions(options => {
+    options.SerializerOptions.WriteIndented = true;
+    options.SerializerOptions.IncludeFields = true;
+    options.SerializerOptions.PreferredObjectCreationHandling = JsonObjectCreationHandling.Populate;
+    options.SerializerOptions.TypeInfoResolver = new DefaultJsonTypeInfoResolver
+    {
+        Modifiers = { InterceptNullSetter }
+    };
+});
+```
