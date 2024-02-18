@@ -4,10 +4,7 @@ namespace WebApplicationMinimalApi8.Dto;
 
 public record MessageDto
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <example>안녕하세요</example>
+    [SwaggerParameterExample]
     public required string Body { get; init; }
 
 }

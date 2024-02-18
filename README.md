@@ -24,3 +24,6 @@ app.UseExceptionHandler();
 ```csharp
 
 ```
+
+## Swagger Request Exapmle 작성
+* https://medium.com/@niteshsinghal85/multiple-request-response-examples-for-swagger-ui-in-asp-net-core-864c0bdc6619
