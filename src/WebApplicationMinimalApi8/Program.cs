@@ -27,10 +27,12 @@ builder.Services.ConfigureHttpJsonOptions(options => {
     };
 });
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-
 builder.AddFluentValidationEndpointFilter();
 
-
+builder.Services.ConfigureHttpClientDefaults(builder =>
+{
+    builder.AddStandardResilienceHandler();
+});
 builder.Services.AddHttpClient("echo", client =>
 {
     client.BaseAddress = new("https://httpbin.org");
@@ -91,6 +93,21 @@ root.MapPut("/Persons/{id}", (PersonDto person, int id) => Results.Ok(new
     }))
     .WithDescription("사람을 생성합니다.")
     .WithOpenApi();
+
+root.MapPost("/echo", async (HttpContext ctx, JsonDocument json) =>
+{
+    using var httpclient = ctx.RequestServices.GetRequiredService<IHttpClientFactory>().CreateClient("echo");
+
+    using var res = await httpclient.PostAsJsonAsync("post", json);
+    return await res.Content.ReadAsStringAsync();
+
+    //return Results.Text
+    //(
+    //    await res.Content.ReadAsStringAsync(),
+    //    contentType: res.Content.Headers.ContentType?.MediaType,
+    //    statusCode: (int)res.StatusCode
+    //);
+});
 
 app.Run();
 

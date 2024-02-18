@@ -24,7 +24,7 @@ public class ResponseAddTraceIdFilter : IEndpointFilter
                 contentType: v switch
                 {
                     IContentTypeHttpResult c => c.ContentType,
-                    _ => "application/json"
+                    _ => MediaTypeNames.Application.Json
                 },
                 statusCode: v switch
                 {
@@ -32,19 +32,44 @@ public class ResponseAddTraceIdFilter : IEndpointFilter
                     _ => 200
                 }
             ),
+            ContentHttpResult { ResponseContent: not null } v => Results.Text
+            (
+                AddTraceStringId(v.ResponseContent).ToJsonString(serializerOptions),
+                contentType: v.ContentType ?? MediaTypeNames.Application.Json,
+                statusCode: v.StatusCode
+            ),
+            string v => Results.Text
+            (
+                AddTraceStringId(v).ToJsonString(serializerOptions),
+                contentType: MediaTypeNames.Application.Json,
+                statusCode: 200
+            ),
             IResult v => Results.Text
             (
                 $$"""{"traceId":"{{id}}"}""",
-                contentType: "application/json",
+                contentType: MediaTypeNames.Application.Json,
                 statusCode: v switch
                 {
                     IStatusCodeHttpResult c => c.StatusCode,
                     _ => 200
                 }
             ),
-            { } v => Results.Text(AddTraceId(v).ToJsonString(serializerOptions), "application/json", statusCode: 200),
+            { } v => Results.Text
+            (
+                AddTraceId(v).ToJsonString(serializerOptions),
+                MediaTypeNames.Application.Json,
+                statusCode: 200
+            ),
             _ => ret
         };
+
+        JsonNode AddTraceStringId(string value)
+        {
+            var root = JsonNode.Parse(value)!.Root;
+            root["traceId"] = id;
+
+            return root;
+        }
 
         JsonNode AddTraceId(object? value)
         {
