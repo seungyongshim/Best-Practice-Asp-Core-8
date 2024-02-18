@@ -69,6 +69,16 @@ root.MapGet("/500", () =>
     .WithName("InternalException")
     .WithOpenApi();
 
+root.MapPost("/Persons", (PersonDto person) => Results.Created("/Persons/1", new
+    {
+        Id = 1,
+        person.Name,
+        person.Age,
+        person.Emails
+    }))
+    .WithDescription("사람을 생성합니다.")
+    .WithOpenApi();
+
 app.Run();
 
 static void InterceptNullSetter(JsonTypeInfo typeInfo)
