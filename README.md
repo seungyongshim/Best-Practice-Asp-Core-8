@@ -44,3 +44,18 @@ builder.Services.ConfigureHttpJsonOptions(options => {
     };
 });
 ```
+
+## ProblemDetails에 TraceId 추가하기
+* https://stackoverflow.com/questions/76669903/problemdetails-response-does-not-contain-traceid-property
+```csharp
+builder.Services.AddProblemDetails(options =>
+    options.CustomizeProblemDetails = (context) =>
+    {
+        if (!context.ProblemDetails.Extensions.ContainsKey("traceId"))
+        { 
+            string? traceId = Activity.Current?.Id ?? context.HttpContext.TraceIdentifier;
+            context.ProblemDetails.Extensions.Add(new KeyValuePair<string, object?>("traceId", traceId));
+        }
+    }
+);
+```
