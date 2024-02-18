@@ -18,7 +18,6 @@ public class ResponseAddTraceIdFilter : IEndpointFilter
 
         return ret switch
         {
-            //ValidationProblem c => AddTraceIdForFluentValidation(c),
             IValueHttpResult v => Results.Text
             (
                 AddTraceId(v.Value).ToJsonString(serializerOptions),
@@ -46,12 +45,6 @@ public class ResponseAddTraceIdFilter : IEndpointFilter
             { } v => Results.Text(AddTraceId(v).ToJsonString(serializerOptions), "application/json", statusCode: 200),
             _ => ret
         };
-
-        ValidationProblem AddTraceIdForFluentValidation(ValidationProblem v)
-        {
-            v.ProblemDetails.Extensions["traceId"] = id;
-            return v;
-        }
 
         JsonNode AddTraceId(object? value)
         {
