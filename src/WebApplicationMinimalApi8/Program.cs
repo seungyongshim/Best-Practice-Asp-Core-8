@@ -97,7 +97,6 @@ root.MapPut("/Persons/{id}", (PersonDto person, int id) => Results.Ok(new
 root.MapPost("/echo", async (HttpContext ctx, JsonDocument json) =>
 {
     using var httpclient = ctx.RequestServices.GetRequiredService<IHttpClientFactory>().CreateClient("echo");
-
     using var res = await httpclient.PostAsJsonAsync("post", json);
 
     return await res.Content.ReadAsStringAsync();
