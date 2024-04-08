@@ -8,10 +8,6 @@ namespace SystemTextJsonNullTests;
 
 public class UnitTest1
 {
-    
-
-    
-   
     public static JsonSerializerOptions JsonSerializerOptions { get; } = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -24,12 +20,8 @@ public class UnitTest1
         }
     };
 
-    static void InterceptNullSetter(JsonTypeInfo typeInfo)
+    public static void InterceptNullSetter(JsonTypeInfo typeInfo)
     {
-        static bool IsRequiredMember(JsonPropertyInfo propertyInfo) =>
-        propertyInfo.AttributeProvider?.GetCustomAttributes(typeof(System.Runtime.CompilerServices.RequiredMemberAttribute), true).Any() ?? false;
-
-
         foreach (var (propertyInfo, setProperty) in from propertyInfo in typeInfo.Properties
                                                     let setProperty = propertyInfo.Set
                                                     where setProperty is not null
@@ -39,21 +31,12 @@ public class UnitTest1
             {
                 if (value is null)
                 {
-                    if (IsRequiredMember(propertyInfo))
+                    if (propertyInfo.IsRequired)
                     {
                         throw new JsonException($"Null value not allowed for '{propertyInfo.Name}'");
                     }
 
-                    NullabilityInfoContext context = new();
-
-                    var nullabilityInfo = propertyInfo.AttributeProvider switch
-                    {
-                        FieldInfo fieldInfo => context.Create(fieldInfo),
-                        PropertyInfo propertyInfo => context.Create(propertyInfo),
-                        _ => null
-                    };
-
-                    if (nullabilityInfo?.WriteState is NullabilityState.Nullable)
+                    if (NullabilityInfo(propertyInfo)?.WriteState is NullabilityState.Nullable)
                     {
                         setProperty(obj, value);
                     }
@@ -62,6 +45,18 @@ public class UnitTest1
                 {
                     setProperty(obj, value);
                 }
+            };
+        }
+
+        static NullabilityInfo? NullabilityInfo(JsonPropertyInfo value)
+        {
+            NullabilityInfoContext context = new();
+
+            return value.AttributeProvider switch
+            {
+                FieldInfo fieldInfo => context.Create(fieldInfo),
+                PropertyInfo propertyInfo => context.Create(propertyInfo),
+                _ => null
             };
         }
     }
