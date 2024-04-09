@@ -2,7 +2,6 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
-using Newtonsoft.Json.Linq;
 
 namespace SystemTextJsonNullTests;
 
@@ -62,7 +61,7 @@ public class UnitTest1
     }
 
     [Fact]
-    public void RequireValueNull()
+    public void RequireValueNullShouldBeException()
     {
         var json = """
         {
@@ -70,128 +69,53 @@ public class UnitTest1
         }
         """;
 
-        var exception = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions));
+        var bcl = JsonSerializer.Deserialize<Dto>(json);
+        Assert.Null(bcl.RequireValue);
 
-        Assert.Equal("Null value not allowed for 'requireValue'", exception.Message);
+        Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions));
     }
 
     [Fact]
-    public void RequireValueNull2()
+    public void RequireValueNullShouldBeException2()
     {
         var json = "{}";
 
-        var exception = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions));
+        Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Dto>(json));
 
-        Assert.Equal("JSON deserialization for type 'SystemTextJsonNullTests.Dto' was missing required properties, including the following: requireValue", exception.Message);
+        Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions));
     }
 
     [Fact]
-    public void NotNullDefaultValueNull()
+    public void NullableValueShouldBeNull()
     {
         var json = """
         {
-            "RequireValue": "",
-            "NotNullDefaultValue": null
-        }
-        """;
-
-        var sut = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
-
-        Assert.Equal(sut.RequireValue, "");
-        Assert.Equal(sut.NotNullDefaultValue, "");
-    }
-
-    [Fact]
-    public void NotNullDefaultValueNull2()
-    {
-        var json = """
-        {
-            "RequireValue": ""
-        }
-        """;
-
-        var sut = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
-
-        Assert.Equal(sut.RequireValue, "");
-        Assert.Equal(sut.NotNullDefaultValue, "");
-    }
-
-    [Fact]
-    public void NullableDefaultValueExpectDefault()
-    {
-        var json = """
-        {
-            "RequireValue": ""
-        }
-        """;
-
-        var sut = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
-
-        Assert.Equal(sut.RequireValue, "");
-        Assert.Equal("", sut.NullableDefaultValue);
-    }
-
-    [Fact]
-    public void NullableDefaultValueExpectNull()
-    {
-        var json = """
-        {
-            "RequireValue": "",
-            "NullableDefaultValue": null
-        }
-        """;
-
-        var sut = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
-
-        Assert.Equal(sut.RequireValue, "");
-        Assert.Equal(sut.NullableDefaultValue, null);
-    }
-
-    [Fact]
-    public void NullableDefaultValueExpectAAA()
-    {
-        var json = """
-        {
-            "RequireValue": "",
-            "NullableDefaultValue": "AAA"
-        }
-        """;
-
-        var sut = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
-
-        Assert.Equal("", sut.RequireValue);
-        Assert.Equal("AAA", sut.NullableDefaultValue);
-    }
-
-    [Fact]
-    public void NullableValueExpectDefault()
-    {
-        var json = """
-        {
-            "RequireValue": ""
-        }
-        """;
-
-        var sut = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
-
-        Assert.Equal(sut.RequireValue, "");
-        Assert.Equal(sut.NullableValue, null);
-    }
-
-    [Fact]
-    public void NullableValueExpectNull()
-    {
-        var json = """
-        {
-            "RequireValue": "",
+            "RequireValue": "...",
             "NullableValue": null
         }
         """;
 
-        var sut = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
+        var bcl = JsonSerializer.Deserialize<Dto>(json);
+        Assert.Null(bcl.NullableValue);
 
-        Assert.Equal(sut.RequireValue, "");
-        Assert.Equal(sut.NullableValue, null);
+        var aums = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
+        Assert.Null(aums.NullableValue);
+    }
+
+    [Fact]
+    public void NullableValueShouldBeNull2()
+    {
+        var json = """
+        {
+            "RequireValue": "..."
+        }
+        """;
+
+        var bcl = JsonSerializer.Deserialize<Dto>(json);
+        Assert.Null(bcl.NullableValue);
+
+        var aums = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
+        Assert.Null(aums.NullableValue);
     }
 
     [Fact]
@@ -199,63 +123,166 @@ public class UnitTest1
     {
         var json = """
         {
-            "RequireValue": "",
+            "RequireValue": "...",
             "NullableValue": "CCC"
         }
         """;
 
-        var sut = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
+        var bcl = JsonSerializer.Deserialize<Dto>(json);
+        Assert.Equal("CCC", bcl.NullableValue);
 
-        Assert.Equal("", sut.RequireValue);
-        Assert.Equal(sut.NullableValue, "CCC");
+        var aums = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
+        Assert.Equal("CCC", aums.NullableValue);
     }
 
-
     [Fact]
-    public void StringValuesExpectDefault()
+    public void NotNullDefaultValueShouldBeDefault()
     {
         var json = """
         {
-            "RequireValue": ""
+            "RequireValue": "...",
+            "NotNullDefaultValue": null
         }
         """;
 
-        var sut = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
+        var bcl = JsonSerializer.Deserialize<Dto>(json);
+        Assert.Null(bcl.NotNullDefaultValue);
 
-        Assert.Equal(sut.RequireValue, "");
-        Assert.Equal(sut.StringValues, []);
+        var aums = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
+        Assert.Equal("initialized", aums.NotNullDefaultValue);
     }
 
     [Fact]
-    public void StringValuesExpectNull()
+    public void NotNullDefaultValueShouldBeDefault2()
     {
         var json = """
         {
-            "RequireValue": "",
+            "RequireValue": "..."
+        }
+        """;
+
+        var bcl = JsonSerializer.Deserialize<Dto>(json);
+        Assert.Equal("initialized", bcl.NotNullDefaultValue);
+
+        var aums = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
+        Assert.Equal("initialized", aums.NotNullDefaultValue);
+    }
+
+    [Fact]
+    public void NotNullDefaultValueShouldBeKKK()
+    {
+        var json = """
+        {
+            "RequireValue": "...",
+            "NotNullDefaultValue": "KKK"
+        }
+        """;
+
+        var bcl = JsonSerializer.Deserialize<Dto>(json);
+        Assert.Equal("KKK", bcl.NotNullDefaultValue);
+
+        var aums = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
+        Assert.Equal("KKK", aums.NotNullDefaultValue);
+    }
+
+    [Fact]
+    public void NullableDefaultValueShouldBeNull()
+    {
+        var json = """
+        {
+            "RequireValue": "...",
+            "NullableDefaultValue": null
+        }
+        """;
+
+        var bcl = JsonSerializer.Deserialize<Dto>(json);
+        Assert.Equal("initialized", bcl.NotNullDefaultValue);
+
+        var sut = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
+        Assert.Null(sut.NullableDefaultValue);
+    }
+
+    [Fact]
+    public void NullableDefaultValueShouldBeDefault()
+    {
+        var json = """
+        {
+            "RequireValue": "..."
+        }
+        """;
+
+        var bcl = JsonSerializer.Deserialize<Dto>(json);
+        Assert.Equal("initialized", bcl.NotNullDefaultValue);
+
+        var aums = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
+        Assert.Equal("initialized", aums.NullableDefaultValue);
+    }
+
+    [Fact]
+    public void NullableDefaultValueShouldBeAAA()
+    {
+        var json = """
+        {
+            "RequireValue": "...",
+            "NullableDefaultValue": "AAA"
+        }
+        """;
+
+        var bcl = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
+        Assert.Equal("AAA", bcl.NullableDefaultValue);
+
+        var aums = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
+        Assert.Equal("AAA", aums.NullableDefaultValue);
+    }
+
+    [Fact]
+    public void StringValuesShouldBeEmpty()
+    {
+        var json = """
+        {
+            "RequireValue": "..."
+        }
+        """;
+
+        var bcl = JsonSerializer.Deserialize<Dto>(json);
+        Assert.Equal([], bcl.StringValues);
+
+        var aums = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
+        Assert.Equal([], aums.StringValues);
+    }
+
+    [Fact]
+    public void StringValuesShouldBeEmpty2()
+    {
+        var json = """
+        {
+            "RequireValue": "...",
             "StringValues": null
         }
         """;
 
-        var sut = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
+        var bcl = JsonSerializer.Deserialize<Dto>(json);
+        Assert.Null(bcl.StringValues);
 
-        Assert.Equal(sut.RequireValue, "");
-        Assert.Equal(sut.StringValues, []);
+        var aums = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
+        Assert.Equal([], aums.StringValues);
     }
 
     [Fact]
-    public void StringValuesExpectCCC()
+    public void StringValuesShouldBeCCC()
     {
         var json = """
         {
-            "RequireValue": "",
+            "RequireValue": "...",
             "StringValues": ["CCC"]
         }
         """;
 
-        var sut = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
+        var bcl = JsonSerializer.Deserialize<Dto>(json);
+        Assert.Equal(["CCC"], bcl.StringValues);
 
-        Assert.Equal("", sut.RequireValue);
-        Assert.Equal(sut.StringValues, ["CCC"]);
+        var aums = JsonSerializer.Deserialize<Dto>(json, JsonSerializerOptions);
+        Assert.Equal(["CCC"], aums.StringValues);
     }
 }
 
@@ -263,8 +290,8 @@ public class UnitTest1
 public record Dto
 {
     public required string RequireValue { get; init; }
-    public string NotNullDefaultValue { get; init; } = "";
-    public string? NullableDefaultValue { get; init; } = "";
     public string? NullableValue { get; init; }
+    public string NotNullDefaultValue { get; init; } = "initialized";
+    public string? NullableDefaultValue { get; init; } = "initialized";
     public IEnumerable<string> StringValues { get; init; } = [];
 }
