@@ -9,7 +9,7 @@ on:
 jobs:
   Build-and-Tests:
     name: Build and Test
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: running infrastructure
@@ -20,7 +20,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 7.x.x
+        dotnet-version: 8.x.x
     - name: Add Nuget
       run: |
         cd src
@@ -50,8 +50,8 @@ jobs:
         ref: 'gh-pages' 
         remove: ''  
       if: ${{ github.ref == 'refs/heads/master' }}
-    - name: Publish Unit Test Results
-      uses: docker://ghcr.io/enricomi/publish-unit-test-result-action:v1
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
       if: ${{ github.ref == 'refs/heads/master' && always() }}
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
